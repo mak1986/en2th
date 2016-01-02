@@ -1,0 +1,34 @@
+#!/bin/bash
+# en2th
+# Translate an english word to thai and keep a log file for translated words.
+
+if (( $# == 1 )); then
+
+	# Get the translations
+	thaiResponse="$(trans -b :th $1)"
+
+	wait
+
+	# Create translate directory to store translation log
+	if [[ ! -a ~/translate ]]; then
+		mkdir ~/translate
+	fi
+
+	# Save the lookup to log file
+	echo "${1}|${thaiResponse}|$(date)" >> ~/translate/log
+
+	# Count how many times the user has translated the word
+	count=$(grep -c "^${1}|" ~/translate/log)
+
+	# Output the result
+	echo "Translate: ${1}"
+	echo "Thai: ${thaiResponse}"
+	echo "You've translated '${1}': ${count} time(s)"
+	
+	exit 0
+else
+
+	echo "You must type exact one word to be translated.">&2
+	exit 1
+
+fi
